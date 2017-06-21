@@ -46,7 +46,7 @@ url.repository
 # github_url
 ```
 
-Getting the branch (will default to master)
+Getting the branch (will default to master when initialized)
 
 ```ruby
 url.branch
