@@ -2,6 +2,8 @@
 
 A small ruby gem for parsing Github URLs
 
+[![CircleCI](https://circleci.com/gh/GalvanizeOpenSource/github_url.svg?style=svg)](https://circleci.com/gh/GalvanizeOpenSource/github_url)
+
 ## Installation
 
 Add this line to your application's Gemfile:
