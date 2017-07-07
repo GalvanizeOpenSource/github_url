@@ -25,13 +25,19 @@ Or install it yourself as:
 Initializing a GithubUrl
 
 ```ruby
-url = GithubUrl.new('https://github.com/GalvanizeOpenSource/github_url/blob/master/lib/github_url.rb')
+url = GithubUrl.new(url: 'https://github.com/GalvanizeOpenSource/github_url/blob/master/lib/github_url.rb')
 ```
 
-Initializing a GithubUrl using a specific branch
+Initializing a GithubUrl using a specific default branch
 
 ```ruby
-url_with_branch = GithubUrl.new('https://github.com/GalvanizeOpenSource/github_url/blob/master/lib/github_url.rb', 'branch-besides-master')
+url_with_branch = GithubUrl.new(url: 'https://github.com/GalvanizeOpenSource/github_url/blob/master/lib/github_url.rb', default_branch: 'branch-besides-master')
+```
+
+Initializing a GithubUrl using an override host
+
+```ruby
+url_with_host = GithubUrl.new(url: "https://git.sum.enterprise.org/peterparker/web", host: "git.sum.enterprise.org")
 ```
 
 Getting the organization
