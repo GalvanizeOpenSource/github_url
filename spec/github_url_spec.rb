@@ -1,12 +1,14 @@
 require "spec_helper"
 
 describe GithubUrl do
+  subject { described_class.new(url: url) }
+
   describe "initialization" do
     context "when a valid url is passed with a host" do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum" }
 
       it "instantiates itself" do
-        expect { described_class.new(url) }.to_not raise_error
+        expect { subject }.to_not raise_error
       end
     end
 
@@ -14,7 +16,7 @@ describe GithubUrl do
       let(:url) { "www.github.com/gSchool/fs-curriculum" }
 
       it "instantiates itself" do
-        expect { described_class.new(url) }.to_not raise_error
+        expect { subject }.to_not raise_error
       end
     end
 
@@ -22,7 +24,7 @@ describe GithubUrl do
       let(:url) { "http://www.google.com" }
 
       it "indicates that the URL does not contain github.com" do
-        expect { described_class.new(url) }.to raise_error(described_class::Invalid, "Must contain github.com")
+        expect { subject }.to raise_error(described_class::Invalid, "Must contain github.com")
       end
     end
 
@@ -30,7 +32,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/" }
 
       it "indicates that the organization is missing" do
-        expect { described_class.new(url) }.to raise_error(described_class::Invalid, "Missing organization")
+        expect { subject }.to raise_error(described_class::Invalid, "Missing organization")
       end
     end
 
@@ -38,7 +40,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool" }
 
       it "indicates that the repository is missing" do
-        expect { described_class.new(url) }.to raise_error(described_class::Invalid, "Missing repository")
+        expect { subject }.to raise_error(described_class::Invalid, "Missing repository")
       end
     end
 
@@ -46,7 +48,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/tree" }
 
       it "returns the branch name given" do
-        expect { described_class.new(url) }.to raise_error(described_class::Invalid, "Missing branch")
+        expect { subject }.to raise_error(described_class::Invalid, "Missing branch")
       end
     end
 
@@ -54,7 +56,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/blob" }
 
       it "returns the branch name given" do
-        expect { described_class.new(url) }.to raise_error(described_class::Invalid, "Missing branch")
+        expect { subject }.to raise_error(described_class::Invalid, "Missing branch")
       end
     end
 
@@ -62,7 +64,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/raw" }
 
       it "returns the branch name given" do
-        expect { described_class.new(url) }.to raise_error(described_class::Invalid, "Missing branch")
+        expect { subject }.to raise_error(described_class::Invalid, "Missing branch")
       end
     end
   end
@@ -71,7 +73,7 @@ describe GithubUrl do
     let(:url) { "http://www.github.com/gSchool/fs-curriculum" }
 
     it "returns the organization" do
-      expect(described_class.new(url).organization).to eq("gSchool")
+      expect(subject.organization).to eq("gSchool")
     end
   end
 
@@ -79,7 +81,7 @@ describe GithubUrl do
     let(:url) { "http://www.github.com/gSchool/fs-curriculum" }
 
     it "returns the repository" do
-      expect(described_class.new(url).repository).to eq("fs-curriculum")
+      expect(subject.repository).to eq("fs-curriculum")
     end
   end
 
@@ -88,7 +90,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum" }
 
       it "returns master" do
-        expect(described_class.new(url).branch).to eq("master")
+        expect(subject.branch).to eq("master")
       end
     end
 
@@ -96,7 +98,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/tree/development" }
 
       it "returns the branch name given" do
-        expect(described_class.new(url).branch).to eq("development")
+        expect(subject.branch).to eq("development")
       end
     end
 
@@ -104,7 +106,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/blob/development" }
 
       it "returns the branch name given" do
-        expect(described_class.new(url).branch).to eq("development")
+        expect(subject.branch).to eq("development")
       end
     end
 
@@ -112,18 +114,17 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/raw/development" }
 
       it "returns the branch name given" do
-        expect(described_class.new(url).branch).to eq("development")
+        expect(subject.branch).to eq("development")
       end
     end
 
-    context "when a branch name is not given, and a default branch name is passed" do
-      context "when a branch name is not given" do
-        let(:url) { "http://www.github.com/gSchool/fs-curriculum" }
-        let(:default_branch_name) { "development" }
+    context "when a branch name is not in the url, and a default branch name is passed" do
+      let(:url) { "http://www.github.com/gSchool/fs-curriculum" }
+      let(:default_branch_name) { "development" }
+      subject { described_class.new(url: url, default_branch: default_branch_name) }
 
-        it "returns master" do
-          expect(described_class.new(url, default_branch_name).branch).to eq(default_branch_name)
-        end
+      it "returns the default branch name provided" do
+        expect(subject.branch).to eq(default_branch_name)
       end
     end
   end
@@ -133,7 +134,7 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/foo/bar.md" }
 
       it "returns the path" do
-        expect(described_class.new(url).path).to eq("foo/bar.md")
+        expect(subject.path).to eq("foo/bar.md")
       end
     end
 
@@ -141,7 +142,43 @@ describe GithubUrl do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/tree/development/foo/bar.md" }
 
       it "returns the path" do
-        expect(described_class.new(url).path).to eq("foo/bar.md")
+        expect(subject.path).to eq("foo/bar.md")
+      end
+    end
+  end
+
+  describe "host override" do
+    let(:url) { "https://git.sum.enterprise.org/peterparker/web" }
+    let(:host) { "git.sum.enterprise.org" }
+    subject { described_class.new(url: url, host: host) }
+
+    describe "initialization" do
+      it "does not raise an error" do
+        expect { subject }.to_not raise_error
+      end
+    end
+
+    describe "#organization" do
+      it "returns the organization" do
+        expect(subject.organization).to eq("peterparker")
+      end
+    end
+
+    describe "#repository" do
+      it "returns the repository" do
+        expect(subject.repository).to eq("web")
+      end
+    end
+
+    describe "#branch" do
+      it "returns the branch" do
+        expect(subject.branch).to eq("master")
+      end
+    end
+
+    describe "#path" do
+      it "returns the path" do
+        expect(subject.path).to eq("")
       end
     end
   end

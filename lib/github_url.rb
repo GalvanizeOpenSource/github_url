@@ -1,14 +1,15 @@
 class GithubUrl
-  attr_accessor :url, :default_branch
+  attr_accessor :url
 
-  GITHUB_HOST = "github.com"
+  GITHUB_HOST = "github.com".freeze
 
   class Invalid < StandardError
   end
 
-  def initialize(url, default_branch = "master")
+  def initialize(url:, default_branch: "master", host: GITHUB_HOST)
     @default_branch = default_branch
     @url = url
+    @host = host
 
     validate_url
   end
@@ -36,7 +37,7 @@ class GithubUrl
   end
 
   def validate_url
-    raise(Invalid, "Must contain #{GITHUB_HOST}") unless url.split("/").any? { |e| e.include?(GITHUB_HOST) }
+    raise(Invalid, "Must contain #{@host}") unless url.split("/").any? { |e| e.include?(@host) }
     raise(Invalid, "Missing organization") if organization.nil?
     raise(Invalid, "Missing repository") if repository.nil?
     raise(Invalid, "Missing branch") if !default_branch? && url_path[3].nil?
@@ -44,7 +45,7 @@ class GithubUrl
 
   def url_path
     url_arr = url.split("/")
-    github_index = url_arr.index { |e| e.include?(GITHUB_HOST) }
-    url_arr[github_index + 1..-1]
+    host_index = url_arr.index { |e| e.include?(@host) }
+    url_arr[host_index + 1..-1]
   end
 end
