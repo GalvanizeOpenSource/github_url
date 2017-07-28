@@ -37,6 +37,7 @@ class GithubUrl
   end
 
   def validate_url
+    raise(Invalid, "Url cannot be blank.") if url.strip.empty?
     raise(Invalid, "Must contain #{@host}") unless url.split("/").any? { |e| e.include?(@host) }
     raise(Invalid, "Missing organization") if organization.nil?
     raise(Invalid, "Missing repository") if repository.nil?

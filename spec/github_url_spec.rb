@@ -44,6 +44,14 @@ describe GithubUrl do
       end
     end
 
+    context "given a blank URL" do
+      let(:url) { " " }
+
+      it "indicates the a URL must be present" do
+        expect { subject }.to raise_error(described_class::Invalid, "Url cannot be blank.")
+      end
+    end
+
     context "when a tree key is passed without a name" do
       let(:url) { "http://www.github.com/gSchool/fs-curriculum/tree" }
 
